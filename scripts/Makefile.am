@@ -1,6 +1,6 @@
-bin_SCRIPTS = cortical_surface
+bin_SCRIPTS = cortical_surface msd_masks
 
-EXTRA_DIST = cortical_surface.pl
+EXTRA_DIST = cortical_surface.pl msd_masks.pl
 
 SUFFIXES = .pl
 .pl:
@@ -12,4 +12,4 @@ SUFFIXES = .pl
 		-e 's,xPKGDATADIRx,$(pkgdatadir),g' &&\
 	mv $@-t $@
 
-CLEANFILES = cortical_surface
+CLEANFILES = cortical_surface msd_masks
