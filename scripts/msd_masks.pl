@@ -155,7 +155,7 @@ sub Initialize
    # First, announce ourselves to stdout (for ease in later dissection
    # of log files) -- unless STDOUT is a tty.
 
-   &SelfAnnounce ("STDOUT") if $Verbose && ! -t "STDOUT";
+   # &SelfAnnounce ("STDOUT") if $Verbose && ! -t "STDOUT";
 
    # Set defaults for the global variables.  These can be overridden by 
    # the configuration file or the command line.
