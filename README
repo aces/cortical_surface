@@ -1,0 +1,8 @@
+The cortical_surface package
+============================
+
+The primary goal of the cortical surface package is to create a quick
+surface which very roughly fits the outer surface of the cortex. This
+is primarily used for masking the cerebellum, dura, skull, and
+brainstem away from the cerebrum, and therefore not designed to be a
+high-quality surface fit. For that use the ASP package.

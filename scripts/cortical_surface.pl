@@ -1,0 +1,215 @@
+#!xPERLx -w
+#
+# Script to create a cortical surface from an MRI, given an intensity threshold
+#
+# Usage:  cortical_surface.pl  volume.mnc   output_file.obj   threshold_value
+#                              [transform.xfm]
+#
+
+use MNI::DataDir;
+
+#--- get the 3 arguments
+
+    $volume = shift;
+    $output_file = shift;
+    $threshold = shift;
+
+    $transform = shift;
+
+#--- if not all 3 necessary arguments are present, quit with usage message
+
+    if( ! $threshold ) {
+        die( "\n" .
+             "Usage: $0 volume.mnc   output_file.obj   threshold_value \n" .
+             "          [transform.xfm]\n" .
+             "\n" .
+             "    Creates a cortical surface from the specified volume and\n" .
+             "    threshold.  If the volume is not in Talairach space,\n" .
+             "    a transform must be specified.\n\n" );
+    }
+
+#--- if the output file does not have an ending, give it the ending ".obj"
+
+    if( ! ( $output_file =~ /\..*/ ) ) {
+        $output_file = $output_file . ".obj";
+    }
+
+#--- setup the parameters of the deformation
+
+    $deform_dir    = MNI::DataDir::dir('cortical_surface');
+    $model_file    = "$deform_dir/avg_model_64.obj";
+    $tight_model   = "-1 .5 $model_file -.04 .04";
+    $loose_model   = "-1 .5 $model_file -.08  .08";
+    $tight_elastic = "-1 .5 parametric  -.08  .08";
+    $loose_elastic = "-1 .5 parametric  -.15  .15";
+    $step          = ".1 .1 30 0 $threshold $threshold - 0 0 0";
+
+#--- define the deformation schedule, each entry is 4 items consisting of:
+#
+#       box_filter_width
+#       number of polygons in deforming surface
+#       model constraints to use
+#       number of iterations to run deformation
+#
+#    When the number of polygons increases from one entry to the next
+#    the deforming surface will be subdivided.
+#---
+
+    @schedule = (
+                   6  ,    8192, $tight_model,   100,
+                   4  ,    8192, $tight_model,   100,
+                   4  ,    8192, $loose_model,   100,
+                   4  ,   32768, $tight_elastic, 100,
+                   3  ,   32768, $tight_elastic, 100,
+                   3  ,  131072, $tight_elastic,  20,
+                   2  ,  131072, $tight_elastic,  20,
+                   2  ,  131072, $loose_elastic,  20,
+                   1.5,  131072, $loose_elastic,  20,
+                   0  ,  131072, $loose_elastic,  50,
+                   0  ,  131072, $loose_elastic, 100
+                );
+    $sched_size = 4;
+
+#--- copy the initial model to the output file
+
+    if( $transform )
+    {
+        &system_call( "transform_objects $model_file $transform $output_file invert");
+    }
+    else
+    {
+        &system_call( "cp $model_file $output_file" );
+    }
+
+#--- the deforming surface starts with 8192 polygons
+
+    $n_polys = 8192;
+
+#--- perform each component of the deformation schedule
+
+    for( $i = 0;  $i < @schedule;  $i += $sched_size )
+    {
+
+         #--- get the 4 components of the deformation schedule entry
+
+         ( $filter, $size, $model, $iters ) = @schedule[$i,$i+1,$i+2,$i+3];
+
+         #--- if the schedule size is greater than the current number of
+         #--- polygons in the deforming surface, subdivide the deforming surface
+
+         while( $size > $n_polys )
+         {
+             &system_call( "subdivide_polygons  $output_file  $output_file" );
+             $n_polys *= 4;
+         }
+
+         #--- if the scheduled size is not a multiple of 4 times the previous
+         #--- deforming surface size, then this is an error
+
+         if( $n_polys != $size )
+             { die "invalid # polygons in deformation schedule"; }
+
+         #--- check if the volume needs to be blurred out first */
+
+         if( $filter > 0 )
+         {
+             $tmp_volume = "/tmp/fit$$.mnc";
+             &register_tmp_files( $tmp_volume );
+             &system_call( "box_filter_volume_nd $volume $tmp_volume " .
+                           " $filter $filter $filter" );
+#            system( "box_filter_volume_nd $volume $tmp_volume " .
+#                           " $filter $filter $filter" );
+             $used_volume = $tmp_volume;
+         }
+         else
+         {
+             $used_volume = $volume;
+         }
+
+         #--- finally, deform the surface, using the schedule parameters
+
+         &system_call( "deform_surface  $used_volume none  0 0 0 ".
+                       " $output_file $output_file none 0 1 " .
+                       " $model $step $iters 0.01 0.0 " );
+
+#       system( "deform_surface  $used_volume none  0 0 0 ".
+#                       " $output_file $output_file none 0 1 " .
+#                       " $model $step $iters 0.01 0.0 " );
+
+         if( $filter > 0 )
+         {
+             unlink( "$tmp_volume" );
+             &unregister_tmp_files( $tmp_volume );
+         }
+    }
+
+    print( "Surface extraction finished.\n" );
+
+
+# stuff copied from david_utils.pl #
+
+sub system_call
+{
+    local( $command, $valid_ret ) = @_;
+    local( $ret );
+
+    system( "echo $command" );
+    $ret = system( $command );
+    if( $ret != 0 && (!defined($valid_ret) || $ret != $valid_ret * 256) )
+    {
+        @separate = split( /\s+/, $command );
+        $com = $separate[0];
+        if( $ret == 2 )
+            { &clean_up_and_die( "System command <$com> was interrupted.\n" ); }
+        elsif( $ret == 65280 )
+            { &clean_up_and_die( "System command <$com> was not found.\n" ); }
+        else
+            { &clean_up_and_die( "System command <$com> failed with return value <$ret>.\n" ); }
+    }
+    $ret / 256;
+}
+
+
+@all_tmp_files = ();
+
+sub  register_tmp_files
+{
+    if( ! @all_tmp_files )
+    {
+        $SIG{INT} = 'catch_interrupt_and_delete_tmp';
+        $SIG{QUIT} = 'catch_interrupt_and_delete_tmp';
+        $SIG{ABRT} = 'catch_interrupt_and_delete_tmp';
+        $SIG{KILL} = 'catch_interrupt_and_delete_tmp';
+        $SIG{SEGV} = 'catch_interrupt_and_delete_tmp';
+        $SIG{STOP} = 'catch_interrupt_and_delete_tmp';
+        $SIG{TERM} = 'catch_interrupt_and_delete_tmp';
+    }
+
+    @all_tmp_files = ( @all_tmp_files, @_ );
+}
+
+sub  unregister_tmp_files
+{
+    local( $index, $arg );
+
+    foreach $arg ( @_ )
+    {
+        for( $index = 0;  $index < @all_tmp_files;  ++$index )
+        {
+            if( $all_tmp_files[$index] eq $arg )
+            {
+                last;
+            }
+        }
+
+        if( $index >= @all_tmp_files )
+        {
+            print( "Error in unregister_tmp_files( $arg )\n" );
+        }
+        else
+        {
+            @all_tmp_files = ( @all_tmp_files[1..$index-1],
+                               @all_tmp_files[$index+1..$#all_tmp_files] );
+        }
+    }
+}
