@@ -1,0 +1,10 @@
+2005-09-13      Claude Lepage   <claude@bic.mni.mcgill.ca>
+
+        * Fixed the surface models/avg_model_64.obj as the old one was
+        self-intersecting between the two hemispheres. This surface is
+        used as an initial guess by cortical_surface to build a mask to
+        remove the skull. Overall, this fix will not affect the extraction
+        of the skull, but this fix might become helpful in the future if
+        we want to replace cortical_surface with the more robust CLASP
+        to build the mask.
+
