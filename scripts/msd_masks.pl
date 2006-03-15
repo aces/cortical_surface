@@ -38,16 +38,16 @@ use MNI::FileUtilities qw(test_file check_output_dirs);
 
 # Created initial mask(ed volume)
 $InitialMask = "${TmpDir}/initial_mask.mnc";
-&Spawn("surface_mask2 $InputVolume $SurfaceObject $InitialMask");
+&Spawn("surface_mask2 -binary_mask $InputVolume $SurfaceObject $InitialMask");
 
 # Resample to fix David's fixed x-y-z output dimension order
 # (OK, OK, this is a bit of a brute force approach, but guaranteed to work)
-$MaskedInput = "${TmpDir}/masked_input.mnc" if (!defined($MaskedInput));
-&Spawn("mincresample -like $InputVolume $InitialMask $MaskedInput");
+&Spawn("mincresample -like $InputVolume $InitialMask $Mask");
 
-# Create binary mask (hoping that the source volume has no very small values)
-$T = 0.01;
-&Spawn("mincmath -byte -const2 -$T $T -nsegment $MaskedInput $Mask");
+# Create MaskedInput if required (for compatibility with old version).
+if (defined($MaskedInput)) {
+    &Spawn( "minccalc -clobber -expression 'if(A[1]>0.5){out=A[0];}else{out=0;};' $InputVolume $Mask $MaskedInput" );
+}
 
 if (defined($DilatedMask)) {
     &Spawn(['dilate_volume', $Mask, $DilatedMask, 1, @Dilation]);
@@ -192,7 +192,7 @@ sub Initialize
    # Find all the required subprograms -- everything should be on
    # the $PATH already, else we're in for a hard time portability-wise
 
-   my(@programs) = qw(dilate_volume mincresample mincmath surface_mask2);
+   my(@programs) = qw(dilate_volume mincresample minccalc surface_mask2);
    RegisterPrograms (\@programs);
 
 #   &JobControl::SetOptions (ErrorAction => 'fatal',
@@ -204,9 +204,7 @@ sub Initialize
    # as appropriate
    
    AddDefaultArgs("mincresample", '-quiet') unless $Verbose;
-   AddDefaultArgs("mincmath", '-quiet') unless $Verbose;
    AddDefaultArgs("mincresample", '-clobber') if $Clobber;
-   AddDefaultArgs("mincmath", '-clobber') if $Clobber;
 
    check_output_dirs ($TmpDir) if $Execute;
    

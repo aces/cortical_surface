@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT
 AC_CONFIG_SRCDIR([src/deform_surface.c])
 dnl AC_CONFIG_AUX_DIR(ac_config_aux)
-AM_INIT_AUTOMAKE(cortical_surface, 1.0)
+AM_INIT_AUTOMAKE(cortical_surface, 1.1)
 AM_CONFIG_HEADER([config.h])
 
 AC_REVISION($Revision$)
