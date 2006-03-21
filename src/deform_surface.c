@@ -168,7 +168,7 @@ int  main(
         compute_polygon_normals( polygons );
 
     if( status == OK )
-        status = output_graphics_file( output_filename, BINARY_FORMAT,
+        status = output_graphics_file( output_filename, ASCII_FORMAT,
                                        n_objects, object_list );
 
     return( status != OK );
