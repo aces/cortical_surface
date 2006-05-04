@@ -1,0 +1,9 @@
+%product cortical_surface
+%copyright 1998-2006 David MacDonald
+%vendor McConnell Brain Imaging Centre
+%packager Claude Lepage <claude@bic.mni.mcgill.ca>
+%license COPYING
+%readme README
+%description cortical surface extraction for skull masking
+%version @VERSION@
+%requires bicpl

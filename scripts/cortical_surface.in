@@ -1,12 +1,15 @@
-#!xPERLx -w
+#!@PERL@
 #
 # Script to create a cortical surface from an MRI, given an intensity threshold
 #
-# Usage:  cortical_surface.pl  volume.mnc   output_file.obj   threshold_value
-#                              [transform.xfm]
+# Usage:  cortical_surface  volume.mnc   output_file.obj   threshold_value
+#                           [transform.xfm]
 #
 
-use MNI::DataDir;
+use warnings "all";
+use FindBin;
+
+#use MNI::DataDir;
 
 #--- get the 3 arguments
 
@@ -36,7 +39,8 @@ use MNI::DataDir;
 
 #--- setup the parameters of the deformation
 
-    $deform_dir    = MNI::DataDir::dir('cortical_surface');
+    $deform_dir    = "$FindBin::Bin/../share/cortical_surface";
+    #$deform_dir    = MNI::DataDir::dir('cortical_surface');
     $model_file    = "$deform_dir/avg_model_64.obj";
     $tight_model   = "-1 .5 $model_file -.04 .04";
     $loose_model   = "-1 .5 $model_file -.08  .08";

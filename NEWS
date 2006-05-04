@@ -8,4 +8,8 @@ Release 1.1
 
 Bug fixed in msd_masks.pl.
 
+Release 1.1.1
+=============
+
+Repackage for minc2 m4 files; add epm-header; clean-up for MNI::DataDir
 

@@ -1,3 +1,7 @@
+2006-04-29      Claude Lepage   <claude@bic.mni.mcgill.ca>
+        * Repackage for minc2 m4 files; add epm-header
+        * Remove absolute paths in perl scripts
+
 2006-03-15      Claude Lepage   <claude@bic.mni.mcgill.ca>
 	* Fixed scripts/msd_masks.pl to use -binary_mask in the call
         to surface_mask2. This avoids using a threshold=0.01 to detect

@@ -1,4 +1,4 @@
-#!xPERLx -w
+#!@PERL@
 #---------------------------------------------------------------------------
 #@COPYRIGHT :
 #             Copyright 1998, Alex P. Zijdenbos
@@ -20,20 +20,13 @@
 #---------------------------------------------------------------------------
 
 require 5.001;
+use warnings "all";
 
 use MNI::Startup;
 use Getopt::Tabular;
 use MNI::Spawn;
 use MNI::FileUtilities qw(test_file check_output_dirs);
-#use JobControl qw(AddProgramOptions Spawn);
 
-#require "file_utilities.pl";
-#require "path_utilities.pl";
-#require "numeric_utilities.pl";
-#require "minc_utilities.pl";
-#require "volume_heuristics.pl";
-
-#&Startup;	
 &Initialize;	
 
 # Created initial mask(ed volume)
@@ -53,7 +46,6 @@ if (defined($DilatedMask)) {
     &Spawn(['dilate_volume', $Mask, $DilatedMask, 1, @Dilation]);
 }
 
-#&Cleanup (1);
 
 # ------------------------------ MNI Header ----------------------------------
 #@NAME       : &CreateInfoText
