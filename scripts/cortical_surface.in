@@ -1,4 +1,4 @@
-#!@PERL@
+#! @PERL@
 #
 # Script to create a cortical surface from an MRI, given an intensity threshold
 #

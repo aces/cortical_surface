@@ -1,18 +1,17 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT
+AC_INIT([cortical_surface],[1.1.2],[Dave McDonald])
 AC_CONFIG_SRCDIR([src/deform_surface.c])
-dnl AC_CONFIG_AUX_DIR(ac_config_aux)
-AM_INIT_AUTOMAKE(cortical_surface, 1.1.1)
+
+AM_INIT_AUTOMAKE
+
 AM_CONFIG_HEADER([config.h])
 
-AC_REVISION($Revision$)
+smr_WITH_BUILD_PATH
 
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 AC_PROG_CC
-
-smr_WITH_BUILD_PATH
 
 # Check for required C libraries
 mni_REQUIRE_BICPL

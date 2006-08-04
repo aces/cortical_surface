@@ -1,6 +1,10 @@
+2006-07-04  Andrew L Janke <a.janke@gmail.com>
+	* A few minor fiddles with copnfigure.ac for compatibility
+	* added a COPYING file so that the GPL does't get us
+	
 2006-04-29      Claude Lepage   <claude@bic.mni.mcgill.ca>
-        * Repackage for minc2 m4 files; add epm-header
-        * Remove absolute paths in perl scripts
+	* Repackage for minc2 m4 files; add epm-header
+	* Remove absolute paths in perl scripts
 
 2006-03-15      Claude Lepage   <claude@bic.mni.mcgill.ca>
 	* Fixed scripts/msd_masks.pl to use -binary_mask in the call
