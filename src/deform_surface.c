@@ -1,3 +1,8 @@
+/*
+   Copyright Alan C. Evans
+   Professor of Neurology
+   McGill University
+*/
 #include  <volume_io/internal_volume_io.h>
 #include  <deform.h>
 
@@ -18,6 +23,7 @@ private  void  usage(
     print_error( "   min_isovalue max_isovalue +/-/n\n" );
     print_error( "   gradient_threshold angle tolerance\n" );
     print_error( "   max_iterations  movement_threshold stop_threshold\n" );
+    print_error( "\nCopyright Alan C. Evans\nProfessor of Neurology\nMcGill University\n" );
 }
 
 int  main(

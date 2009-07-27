@@ -5,6 +5,10 @@
 # Usage:  cortical_surface  volume.mnc   output_file.obj   threshold_value
 #                           [transform.xfm]
 #
+# Copyright Alan C. Evans
+# Professor of Neurology
+# McGill University
+#
 
 use warnings "all";
 use FindBin;
@@ -28,7 +32,10 @@ use FindBin;
              "\n" .
              "    Creates a cortical surface from the specified volume and\n" .
              "    threshold.  If the volume is not in Talairach space,\n" .
-             "    a transform must be specified.\n\n" );
+             "    a transform must be specified.\n\n" .
+             "Copyright Alan C. Evans\n" .
+             "Professor of Neurology\n" .
+             "McGill University\n";
     }
 
 #--- if the output file does not have an ending, give it the ending ".obj"
