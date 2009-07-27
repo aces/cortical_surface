@@ -35,7 +35,7 @@ use FindBin;
              "    a transform must be specified.\n\n" .
              "Copyright Alan C. Evans\n" .
              "Professor of Neurology\n" .
-             "McGill University\n";
+             "McGill University\n" );
     }
 
 #--- if the output file does not have an ending, give it the ending ".obj"

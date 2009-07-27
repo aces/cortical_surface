@@ -58,7 +58,7 @@ if (defined($DilatedMask)) {
 sub CreateInfoText
 {
 
-   $license = << LICENSE;
+   $license = <<LICENSE;
 Copyright Alan C. Evans
 Professor of Neurology
 McGill University
@@ -69,7 +69,7 @@ LICENSE
 Usage: $ProgramName [options] <in.mnc> <surface.obj> <mask.mnc>
        $ProgramName -help
 
-   $license
+$license
 USAGE
 
    $Help = <<HELP;
