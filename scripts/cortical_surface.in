@@ -11,7 +11,10 @@
 #
 
 use warnings "all";
+use File::Temp qw/ tempdir /;
 use FindBin;
+
+my $tmpdir = &tempdir( "$cortical_surface-XXXXXX", TMPDIR => 1, CLEANUP => 1 );
 
 #use MNI::DataDir;
 
@@ -124,12 +127,10 @@ use FindBin;
 
          if( $filter > 0 )
          {
-             $tmp_volume = "/tmp/fit$$.mnc";
+             $tmp_volume = "${tmpdir}/fit$$.mnc";
              &register_tmp_files( $tmp_volume );
              &system_call( "box_filter_volume_nd $volume $tmp_volume " .
                            " $filter $filter $filter" );
-#            system( "box_filter_volume_nd $volume $tmp_volume " .
-#                           " $filter $filter $filter" );
              $used_volume = $tmp_volume;
          }
          else
@@ -142,10 +143,6 @@ use FindBin;
          &system_call( "deform_surface  $used_volume none  0 0 0 ".
                        " $output_file $output_file none 0 1 " .
                        " $model $step $iters 0.01 0.0 " );
-
-#       system( "deform_surface  $used_volume none  0 0 0 ".
-#                       " $output_file $output_file none 0 1 " .
-#                       " $model $step $iters 0.01 0.0 " );
 
          if( $filter > 0 )
          {

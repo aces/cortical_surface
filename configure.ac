@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([cortical_surface],[1.2.0],[Dave McDonald])
+AC_INIT([cortical_surface],[1.2.1],[Dave McDonald])
 AC_CONFIG_SRCDIR([src/deform_surface.c])
 
 AM_INIT_AUTOMAKE
