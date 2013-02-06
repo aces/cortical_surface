@@ -14,7 +14,7 @@ use warnings "all";
 use File::Temp qw/ tempdir /;
 use FindBin;
 
-my $tmpdir = &tempdir( "$cortical_surface-XXXXXX", TMPDIR => 1, CLEANUP => 1 );
+my $tmpdir = &tempdir( "cortical_surface-XXXXXX", TMPDIR => 1, CLEANUP => 1 );
 
 #use MNI::DataDir;
 
@@ -50,12 +50,13 @@ my $tmpdir = &tempdir( "$cortical_surface-XXXXXX", TMPDIR => 1, CLEANUP => 1 );
 #--- setup the parameters of the deformation
 
     $deform_dir    = "$FindBin::Bin/../share/cortical_surface";
-    #$deform_dir    = MNI::DataDir::dir('cortical_surface');
-    $model_file    = "$deform_dir/avg_model_64.obj";
+    $model_file    = "$deform_dir/white_8192.obj";
+
     $tight_model   = "-1 .5 $model_file -.04 .04";
     $loose_model   = "-1 .5 $model_file -.08  .08";
     $tight_elastic = "-1 .5 parametric  -.08  .08";
     $loose_elastic = "-1 .5 parametric  -.15  .15";
+    $veryloose_elastic = "-1 .5 parametric  -.25  .25";
     $step          = ".1 .1 30 0 $threshold $threshold - 0 0 0";
 
 #--- define the deformation schedule, each entry is 4 items consisting of:
@@ -80,7 +81,8 @@ my $tmpdir = &tempdir( "$cortical_surface-XXXXXX", TMPDIR => 1, CLEANUP => 1 );
                    2  ,  131072, $loose_elastic,  20,
                    1.5,  131072, $loose_elastic,  20,
                    0  ,  131072, $loose_elastic,  50,
-                   0  ,  131072, $loose_elastic, 100
+                   0  ,  131072, $loose_elastic, 100,
+                   0  ,  524288, $veryloose_elastic, 100
                 );
     $sched_size = 4;
 

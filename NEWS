@@ -1,3 +1,9 @@
+Release 1.2.2
+=============
+        * add model white_8192.obj as an improved version of
+          avg_model_64.obj (better distribution of vertices)
+        * add a stage in cortical_surface fitting
+
 Release 1.2.1
 =============
         * use PERL tmpdir in cortical_surface script
